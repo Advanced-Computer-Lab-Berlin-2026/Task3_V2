@@ -17,6 +17,9 @@ export default function Reviews() {
 
   useEffect(() => { load() }, [])
 
+  // only show the logged-in user's own reviews
+  const myReviews = reviews.filter(r => user && r.reviewedBy?._id === user.id)
+
   async function loadSummary(e) {
     e.preventDefault()
     setError('')
@@ -53,27 +56,22 @@ export default function Reviews() {
       {error && <div className="text-red-600 text-sm">{error}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {reviews.map(r => {
-          const isMine = user && r.reviewedBy?._id === user.id
-          return (
-            <div key={r._id} className="card">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold">{r.courseCode} • {r.rating}/5</div>
-                  <div className="text-sm text-zinc-600">by {r.reviewedBy?.name || 'unknown'}</div>
-                </div>
-                {isMine && (
-                  <div className="flex gap-2">
-                    <Link to={`/reviews/${r._id}`} className="btn text-sm">Edit</Link>
-                    <button onClick={() => onDelete(r._id)} className="btn text-sm">Delete</button>
-                  </div>
-                )}
+        {myReviews.map(r => (
+          <div key={r._id} className="card">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-semibold">{r.courseCode} • {r.rating}/5</div>
+                <div className="text-sm text-zinc-600">by {r.reviewedBy?.name || 'unknown'}</div>
               </div>
-              {r.comment && <p className="mt-2 text-sm">{r.comment}</p>}
+              <div className="flex gap-2">
+                <Link to={`/reviews/${r._id}`} className="btn text-sm">Edit</Link>
+                <button onClick={() => onDelete(r._id)} className="btn text-sm">Delete</button>
+              </div>
             </div>
-          )
-        })}
-        {reviews.length === 0 && <div className="text-sm text-zinc-600">No reviews yet.</div>}
+            {r.comment && <p className="mt-2 text-sm">{r.comment}</p>}
+          </div>
+        ))}
+        {myReviews.length === 0 && <div className="text-sm text-zinc-600">You haven't written any reviews yet.</div>}
       </div>
     </div>
   )
