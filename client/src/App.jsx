@@ -35,7 +35,9 @@ export default function App() {
         <Route path="/" element={<Navigate to="/reviews" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/reviews" element={
+          <ProtectedRoute><Reviews /></ProtectedRoute>
+        } />
         <Route path="/reviews/new" element={
           <ProtectedRoute><ReviewForm /></ProtectedRoute>
         } />
